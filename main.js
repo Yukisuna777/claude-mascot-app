@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, clipboard, Menu } = require('electron');
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
@@ -111,4 +111,24 @@ ipcMain.on('log-line', (event, text) => {
   if (logEnabled && logStream) {
     logStream.write(text + '\n');
   }
+});
+
+// ── クリップボード ─────────────────────────────────────────────
+ipcMain.handle('clipboard-read', () => clipboard.readText());
+ipcMain.handle('clipboard-write', (event, text) => clipboard.writeText(text));
+
+// ── 右クリックコンテキストメニュー ────────────────────────────
+ipcMain.on('show-context-menu', (event, hasSelection) => {
+  const menu = Menu.buildFromTemplate([
+    {
+      label: 'コピー',
+      enabled: hasSelection,
+      click: () => event.sender.send('context-menu-action', 'copy'),
+    },
+    {
+      label: 'ペースト',
+      click: () => event.sender.send('context-menu-action', 'paste'),
+    },
+  ]);
+  menu.popup({ window: mainWindow });
 });

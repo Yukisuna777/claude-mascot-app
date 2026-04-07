@@ -16,4 +16,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // ログ
   setLogging: (enabled) => ipcRenderer.invoke('set-logging', enabled),
   logLine: (text) => ipcRenderer.send('log-line', text),
+
+  // クリップボード
+  clipboardRead: () => ipcRenderer.invoke('clipboard-read'),
+  clipboardWrite: (text) => ipcRenderer.invoke('clipboard-write', text),
+
+  // 右クリックメニュー
+  showContextMenu: (hasSelection) => ipcRenderer.send('show-context-menu', hasSelection),
+  onContextMenuAction: (callback) => ipcRenderer.on('context-menu-action', (_e, action) => callback(action)),
 });

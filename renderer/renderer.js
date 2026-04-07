@@ -226,3 +226,38 @@ document.addEventListener('mouseup', () => {
 toggleLog.addEventListener('change', async () => {
   await window.electronAPI.setLogging(toggleLog.checked);
 });
+
+// ── コピー / ペースト ─────────────────────────────────────────
+async function copySelection() {
+  const sel = term.getSelection();
+  if (sel) await window.electronAPI.clipboardWrite(sel);
+}
+
+async function pasteFromClipboard() {
+  const text = await window.electronAPI.clipboardRead();
+  if (text) window.electronAPI.sendInput(text);
+}
+
+// Ctrl+Shift+C / Ctrl+Shift+V をxtermより先に処理
+term.attachCustomKeyEventHandler((e) => {
+  if (e.type !== 'keydown') return true;
+  if (e.ctrlKey && e.shiftKey && e.code === 'KeyC') {
+    copySelection();
+    return false; // xtermへ伝播しない
+  }
+  if (e.ctrlKey && e.shiftKey && e.code === 'KeyV') {
+    pasteFromClipboard();
+    return false;
+  }
+  return true;
+});
+
+// 右クリックメニュー
+document.getElementById('terminal').addEventListener('contextmenu', () => {
+  window.electronAPI.showContextMenu(term.hasSelection());
+});
+
+window.electronAPI.onContextMenuAction((action) => {
+  if (action === 'copy') copySelection();
+  if (action === 'paste') pasteFromClipboard();
+});
