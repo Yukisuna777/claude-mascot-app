@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claude Code Mascot</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- xterm.js (node_modules からバンドルせずローカル読み込み) -->
+  <link rel="stylesheet" href="../node_modules/xterm/css/xterm.css" />
+</head>
+<body>
+  <!-- 起動時のフォルダ選択オーバーレイ -->
+  <div id="overlay">
+    <div id="overlay-box">
+      <div id="mascot-splash">( ´ω` )</div>
+      <h2>Claude Code Mascot</h2>
+      <p>作業フォルダを選んで起動してください</p>
+      <button id="btn-select">フォルダを選択</button>
+    </div>
+  </div>
+
+  <!-- メイン画面 -->
+  <div id="app" class="hidden">
+    <!-- ツールバー -->
+    <div id="toolbar">
+      <span id="cwd-label" class="toolbar-item">📁 —</span>
+      <label class="toolbar-item toggle-wrap">
+        <input type="checkbox" id="toggle-log" />
+        <span>ログ保存</span>
+      </label>
+      <button id="btn-restart" class="toolbar-item">再起動</button>
+    </div>
+
+    <!-- 左右レイアウト -->
+    <div id="main-layout">
+      <!-- 左: ターミナル -->
+      <div id="terminal-pane">
+        <div id="terminal"></div>
+      </div>
+
+      <!-- 区切り線（ドラッグ可能） -->
+      <div id="resizer"></div>
+
+      <!-- 右: マスコット -->
+      <div id="mascot-pane">
+        <div id="mascot-face"></div>
+        <div id="mascot-state-label"></div>
+        <div id="mascot-message"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../node_modules/xterm/lib/xterm.js"></script>
+  <script src="../node_modules/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
